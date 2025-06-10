@@ -1,3 +1,13 @@
 spring:
   application:
     name: bankingmanagement-api
+
+logging:
+  level:
+    com:
+      bankingmanagement: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
+  file:
+    name: logs/bankingmanagement.log
+    path: ./logs
