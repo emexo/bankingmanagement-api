@@ -11,3 +11,13 @@ logging:
   file:
     name: logs/bankingmanagement.log
     path: ./logs
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
