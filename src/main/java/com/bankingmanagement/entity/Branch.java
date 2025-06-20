@@ -17,4 +17,8 @@ public class Branch {
 
     @Column(name = "branch_address")
     private String branchAddress;
+
+    @ManyToOne
+    @JoinColumn(name = "bank_code")
+    private Bank bank;
 }

@@ -2,6 +2,8 @@ package com.bankingmanagement.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Table(name ="t_bank")
 @Entity
 public class Bank {
@@ -16,4 +18,7 @@ public class Bank {
 
     @Column(name = "bank_address")
     private String bankAddress;
+
+    @OneToMany(mappedBy = "bank")
+    private Set<Branch> branchSet;
 }
