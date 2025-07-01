@@ -1,9 +1,13 @@
 package com.bankingmanagement.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
+@Getter
+@Setter
 @Table(name ="t_bank")
 @Entity
 public class Bank {
