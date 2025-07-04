@@ -14,12 +14,9 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 public class BankServiceImpl implements BankService{
-
+    @Autowired
     public BankRepository bankRepository;
 
-    public BankServiceImpl(BankRepository bankRepository) {
-        this.bankRepository = bankRepository;
-    }
 
     @Override
     public List<BankTO> getAllBanks() throws BankDetailsNotFoundException {
