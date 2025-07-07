@@ -1,8 +1,10 @@
 package com.bankingmanagement.service;
 
+import com.bankingmanagement.BankingManagement;
 import com.bankingmanagement.entity.Bank;
 import com.bankingmanagement.exception.BankDetailsNotFoundException;
 import com.bankingmanagement.model.BankTO;
+import com.bankingmanagement.model.BranchTO;
 import com.bankingmanagement.repository.BankRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +28,44 @@ public class BankServiceImpl implements BankService{
             log.info("BankServiceImpl.getAllBanks: No bank details found");
             throw new BankDetailsNotFoundException("No bank details found");
         }
+        return banks.stream()
+                .map(bank -> new BankTO(
+                        bank.getBankCode(),
+                        bank.getBankName(),
+                        bank.getBankAddress(),
+                        bank.getBranchSet().stream()
+                                .map(branch -> new BranchTO(
+                                        branch.getBranchId(),
+                                        branch.getBranchName(),
+                                        branch.getBranchAddress()))
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
+    }
 
-      List<BankTO> bankTOS =  banks.stream().map(bank -> {
-            BankTO bankTO = new BankTO(bank.getBankCode(), bank.getBankName(), bank.getBankAddress());
-            return bankTO;
-        }).collect(Collectors.toList());
+    /**
+     * Fetches bank details by bank code.
+     * @param bankCode
+     * @return
+     * @throws BankDetailsNotFoundException
+     */
+    @Override
+    public BankTO getBankByCode(int bankCode) throws BankDetailsNotFoundException {
+        log.info("BankServiceImpl.getBankByCode: Fetching bank details for bank code: {}", bankCode);
+        Bank bank = bankRepository.findById(bankCode)
+                .orElseThrow(() -> new BankDetailsNotFoundException("Bank details not found for code: " + bankCode));
 
-        log.info("BankServiceImpl.getAllBanks: Successfully fetched bank details");
-        return bankTOS;
+        return new BankTO(
+                bank.getBankCode(),
+                bank.getBankName(),
+                bank.getBankAddress(),
+                bank.getBranchSet().stream()
+                        .map(branch -> new BranchTO(
+                                branch.getBranchId(),
+                                branch.getBranchName(),
+                                branch.getBranchAddress()))
+                        .collect(Collectors.toList())
+        );
+
     }
 }

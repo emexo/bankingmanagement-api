@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BankService {
     List<BankTO> getAllBanks() throws BankDetailsNotFoundException;
+
+    BankTO getBankByCode(int bankCode) throws BankDetailsNotFoundException;
 }
