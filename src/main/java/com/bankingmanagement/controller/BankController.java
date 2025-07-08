@@ -7,10 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -40,6 +37,17 @@ public class BankController {
         log.info("Fetching bank details for bank code: {}", bankCode);
         BankTO bankTO = bankService.getBankByCode(bankCode);
         log.info("Successfully fetched bank details for bank code: {}", bankCode);
+
+        return new ResponseEntity<>(bankTO, HttpStatus.OK);
+    }
+
+    // http://localhost:8080/api/v1/banks/name?bankname=ICICI  GET
+
+    @GetMapping("/name")
+    public ResponseEntity<BankTO> getBankByName(@RequestParam("bankname") String bankName) throws BankDetailsNotFoundException {
+        log.info("Fetching bank details for bank name: {}", bankName);
+        BankTO bankTO = bankService.getBankByName(bankName);
+        log.info("Successfully fetched bank details for bank name: {}", bankName);
 
         return new ResponseEntity<>(bankTO, HttpStatus.OK);
     }

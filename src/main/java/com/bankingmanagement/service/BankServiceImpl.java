@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -67,5 +68,32 @@ public class BankServiceImpl implements BankService{
                         .collect(Collectors.toList())
         );
 
+    }
+
+    /**
+     * Fetches bank details by bank name.
+     * @param bankName
+     * @return
+     * @throws BankDetailsNotFoundException
+     */
+    public BankTO getBankByName(String bankName) throws BankDetailsNotFoundException {
+        log.info("BankServiceImpl.getBankByName: Fetching bank details for bank name: {}", bankName);
+        Bank bank = bankRepository.findByBankName(bankName);
+        if (Objects.isNull(bank)) {
+            log.info("BankServiceImpl.getBankByName: Bank details not found for name: {}", bankName);
+            throw new BankDetailsNotFoundException("Bank details not found for name: " + bankName);
+        }
+
+        return new BankTO(
+                bank.getBankCode(),
+                bank.getBankName(),
+                bank.getBankAddress(),
+                bank.getBranchSet().stream()
+                        .map(branch -> new BranchTO(
+                                branch.getBranchId(),
+                                branch.getBranchName(),
+                                branch.getBranchAddress()))
+                        .collect(Collectors.toList())
+        );
     }
 }

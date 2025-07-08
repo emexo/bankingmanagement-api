@@ -9,4 +9,6 @@ public interface BankService {
     List<BankTO> getAllBanks() throws BankDetailsNotFoundException;
 
     BankTO getBankByCode(int bankCode) throws BankDetailsNotFoundException;
+
+    BankTO getBankByName(String bankName) throws BankDetailsNotFoundException;
 }
