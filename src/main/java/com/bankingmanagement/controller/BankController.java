@@ -1,8 +1,10 @@
 package com.bankingmanagement.controller;
 
 import com.bankingmanagement.exception.BankDetailsNotFoundException;
+import com.bankingmanagement.model.BankRequest;
 import com.bankingmanagement.model.BankTO;
 import com.bankingmanagement.service.BankService;
+import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,5 +52,21 @@ public class BankController {
         log.info("Successfully fetched bank details for bank name: {}", bankName);
 
         return new ResponseEntity<>(bankTO, HttpStatus.OK);
+    }
+
+    // http://localhost:8080/api/v1/banks  POST
+    /**
+     * Adds a new bank to the system.
+     * @param bank
+     * @return
+     * @throws BankDetailsNotFoundException
+     */
+    @PostMapping
+    public ResponseEntity<BankTO> addBank(@RequestBody @Valid BankRequest bank) throws BankDetailsNotFoundException {
+        log.info("Adding new bank: {}", bank);
+        BankTO addedBank = bankService.addBank(bank);
+        log.info("Successfully added new bank: {}", addedBank);
+
+        return new ResponseEntity<>(addedBank, HttpStatus.CREATED);
     }
 }

@@ -1,6 +1,7 @@
 package com.bankingmanagement.service;
 
 import com.bankingmanagement.exception.BankDetailsNotFoundException;
+import com.bankingmanagement.model.BankRequest;
 import com.bankingmanagement.model.BankTO;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface BankService {
     BankTO getBankByCode(int bankCode) throws BankDetailsNotFoundException;
 
     BankTO getBankByName(String bankName) throws BankDetailsNotFoundException;
+
+    BankTO addBank(BankRequest bank) throws BankDetailsNotFoundException;
 }

@@ -2,7 +2,9 @@ package com.bankingmanagement.service;
 
 import com.bankingmanagement.BankingManagement;
 import com.bankingmanagement.entity.Bank;
+import com.bankingmanagement.entity.Branch;
 import com.bankingmanagement.exception.BankDetailsNotFoundException;
+import com.bankingmanagement.model.BankRequest;
 import com.bankingmanagement.model.BankTO;
 import com.bankingmanagement.model.BranchTO;
 import com.bankingmanagement.repository.BankRepository;
@@ -10,8 +12,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -89,6 +93,42 @@ public class BankServiceImpl implements BankService{
                 bank.getBankName(),
                 bank.getBankAddress(),
                 bank.getBranchSet().stream()
+                        .map(branch -> new BranchTO(
+                                branch.getBranchId(),
+                                branch.getBranchName(),
+                                branch.getBranchAddress()))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @Override
+    public BankTO addBank(BankRequest bank) throws BankDetailsNotFoundException {
+        log.info("BankServiceImpl.addBank: Adding new bank with name: {}", bank.getBankName());
+
+        if (Objects.isNull(bank) || bank.getBankName().isEmpty() || bank.getBankAddress().isEmpty()) {
+            log.error("BankServiceImpl.addBank: Invalid bank details provided");
+            throw new BankDetailsNotFoundException("Invalid bank details provided");
+        }
+
+        Bank newBank = new Bank();
+        newBank.setBankName(bank.getBankName());
+        newBank.setBankAddress(bank.getBankAddress());
+
+        Set<Branch> branches = bank.getBranchList().stream().map(branchTO -> {
+            Branch branch = new Branch();
+            branch.setBranchName(branchTO.getBranchName());
+            branch.setBranchAddress(branchTO.getBranchAddress());
+            return branch;
+        }).collect(Collectors.toSet());
+        newBank.setBranchSet(branches);
+
+        Bank saveBank = bankRepository.save(newBank);
+        log.info("BankServiceImpl.addBank: Bank added successfully with code: {}", saveBank.getBankCode());
+        return new BankTO(
+                saveBank.getBankCode(),
+                saveBank.getBankName(),
+                saveBank.getBankAddress(),
+                saveBank.getBranchSet().stream()
                         .map(branch -> new BranchTO(
                                 branch.getBranchId(),
                                 branch.getBranchName(),
