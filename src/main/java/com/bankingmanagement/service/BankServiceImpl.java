@@ -118,6 +118,7 @@ public class BankServiceImpl implements BankService{
             Branch branch = new Branch();
             branch.setBranchName(branchTO.getBranchName());
             branch.setBranchAddress(branchTO.getBranchAddress());
+            branch.setBank(newBank);
             return branch;
         }).collect(Collectors.toSet());
         newBank.setBranchSet(branches);

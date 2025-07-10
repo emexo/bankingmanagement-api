@@ -22,7 +22,7 @@ public class Branch {
     @Column(name = "branch_address")
     private String branchAddress;
 
-    @ManyToOne
-    @JoinColumn(name = "bank_code")
+    @ManyToOne( cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "bank_code", referencedColumnName = "bank_code", nullable = false)
     private Bank bank;
 }
