@@ -38,7 +38,8 @@ public class BankServiceImpl implements BankService{
                         bank.getBankCode(),
                         bank.getBankName(),
                         bank.getBankAddress(),
-                        bank.getBranchSet().stream()
+                        (bank.getBranchSet() == null ? new HashSet<Branch>() : bank.getBranchSet())
+                                .stream()
                                 .map(branch -> new BranchTO(
                                         branch.getBranchId(),
                                         branch.getBranchName(),
@@ -118,7 +119,7 @@ public class BankServiceImpl implements BankService{
             Branch branch = new Branch();
             branch.setBranchName(branchTO.getBranchName());
             branch.setBranchAddress(branchTO.getBranchAddress());
-            branch.setBank(newBank);
+            branch.setBank(newBank); //update the bank reference in the branch
             return branch;
         }).collect(Collectors.toSet());
         newBank.setBranchSet(branches);

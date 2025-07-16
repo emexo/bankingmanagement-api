@@ -22,4 +22,6 @@ public interface BankRepository extends JpaRepository<Bank, Integer> {
      */
     @Query(value = "SELECT b FROM Bank b WHERE b.bankName = ?1")
     Bank findByName(String bankName);
+
+    void deleteByBankName(String bankName);
 }
