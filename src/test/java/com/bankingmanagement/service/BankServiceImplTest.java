@@ -1,11 +1,11 @@
 package com.bankingmanagement.service;
 
-import com.bankingmanagement.BankingManagement;
 import com.bankingmanagement.entity.Bank;
 import com.bankingmanagement.entity.Branch;
 import com.bankingmanagement.exception.BankDetailsNotFoundException;
 import com.bankingmanagement.model.BankTO;
 import com.bankingmanagement.repository.BankRepository;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,84 +15,76 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class BankServiceImplTest {
 
     @Mock
-    public BankRepository bankRepository;
+    BankRepository bankRepository;
 
     @InjectMocks
-    public BankServiceImpl bankService;
+    BankServiceImpl bankServiceImpl;
 
     @Test
-    public void getAllBanks_whenBanksExist_thenReturnBankList() throws BankDetailsNotFoundException {
-        List<Bank> banks = new ArrayList<>();
-        Bank bank1 = new Bank();
-        bank1.setBankCode(1);
-        bank1.setBankName("Bank A");
-        bank1.setBankAddress("Address A");
-        Bank bank2 = new Bank();
-        bank2.setBankCode(2);
-        bank2.setBankName("Bank B");
-        bank2.setBankAddress("Address B");
+    public void getAllBanks_whenBankWithBranchExists_thenReturnBankWithBranch() throws BankDetailsNotFoundException {
+        // Mock branch
+        Branch mockBranch = mock(Branch.class);
+        when(mockBranch.getBranchId()).thenReturn(101);
+        when(mockBranch.getBranchName()).thenReturn("Main Branch");
+        when(mockBranch.getBranchAddress()).thenReturn("123 Main St");
 
-        banks.add(bank1);
-        banks.add(bank2);
+        // Mock bank
+        Bank mockBank = mock(Bank.class);
+        when(mockBank.getBankCode()).thenReturn(1);
+        when(mockBank.getBankName()).thenReturn("Test Bank");
+        when(mockBank.getBankAddress()).thenReturn("Test Address");
+        HashSet<Branch> branchSet = new HashSet<>();
+        branchSet.add(mockBranch);
+        when(mockBank.getBranchSet()).thenReturn(branchSet);
 
-        when(bankRepository.findAll()).thenReturn(banks);
+        List<Bank> mockBanks = new ArrayList<>();
+        mockBanks.add(mockBank);
+        when(bankRepository.findAll()).thenReturn(mockBanks);
 
-        List<BankTO> bankTOS= bankService.getAllBanks();
-        assertEquals(2, bankTOS.size());
+        List<BankTO> bankTOS = bankServiceImpl.getAllBanks();
+        assertEquals(1, bankTOS.size());
+        BankTO bankTO = bankTOS.get(0);
+        assertEquals("Test Bank", bankTO.bankName());
+        assertEquals(1, bankTO.branchList().size());
+        assertEquals("Main Branch", bankTO.branchList().get(0).branchName());
+        assertEquals("123 Main St", bankTO.branchList().get(0).branchAddress());
     }
 
     @Test
-    public void getAllBanks_whenBranchExist_thenReturnBankList() throws BankDetailsNotFoundException {
-        List<Bank> banks = new ArrayList<>();
-        Bank bank1 = new Bank();
-        bank1.setBankCode(1);
-        bank1.setBankName("Bank A");
-        bank1.setBankAddress("Address A");
+    public void getAllBanks_whenBanksDetailsExist_thenReturnBankList() throws BankDetailsNotFoundException {
+        List<Bank> mockBanks = new ArrayList<>();
+        Bank mockBank = mock(Bank.class);
+        when(mockBank.getBankCode()).thenReturn(1);
+        when(mockBank.getBankName()).thenReturn("Test Bank");
+        when(mockBank.getBankAddress()).thenReturn("Test Address");
+        when(mockBank.getBranchSet()).thenReturn(null);
 
-        Branch branch1 = new Branch();
-        branch1.setBranchId(101);
-        branch1.setBranchName("Branch A1");
-        branch1.setBranchAddress("Branch Address A1");
-        Set<Branch> branches1 = new HashSet<>();
-        branches1.add(branch1);
-        bank1.setBranchSet(branches1);
+        mockBanks.add(mockBank);
+        when(bankRepository.findAll()).thenReturn(mockBanks);
 
-        Bank bank2 = new Bank();
-        bank2.setBankCode(2);
-        bank2.setBankName("Bank B");
-        bank2.setBankAddress("Address B");
-
-        banks.add(bank1);
-        banks.add(bank2);
-
-        when(bankRepository.findAll()).thenReturn(banks);
-
-        List<BankTO> bankTOS= bankService.getAllBanks();
-        assertEquals(2, bankTOS.size());
+        List<BankTO> bankTOS = bankServiceImpl.getAllBanks();
+        assertEquals(1, bankTOS.size());
     }
 
     @Test
-    public void getAllBanks_whenNoBanksExist_thenThrowException() {
-       when(bankRepository.findAll()).thenReturn(null);
-
-       assertThrows(NullPointerException.class , ()-> bankService.getAllBanks());
+    public void getAllBanks_whenBankDetailsNotExist_thenThrowException(){
+        when(bankRepository.findAll()).thenReturn(null);
+        assertThrows(BankDetailsNotFoundException.class, ()-> bankServiceImpl.getAllBanks());
     }
 
     @Test
-    public void getAllBanks_whenNoBanksExist_thenThrowBankDetailsException() {
+    public void getAllBanks_whenBankDetailsEmpty_thenThrowException() {
         when(bankRepository.findAll()).thenReturn(new ArrayList<>());
-
-        assertThrows(BankDetailsNotFoundException.class , ()-> bankService.getAllBanks());
+        assertThrows(BankDetailsNotFoundException.class, () -> bankServiceImpl.getAllBanks());
     }
 }

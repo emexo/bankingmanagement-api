@@ -29,7 +29,7 @@ public class BankServiceImpl implements BankService{
     public List<BankTO> getAllBanks() throws BankDetailsNotFoundException {
         log.info("BankServiceImpl.getAllBanks: Fetching all bank details");
         List<Bank> banks = bankRepository.findAll();
-        if (banks.isEmpty()) {
+        if (banks == null || banks.isEmpty()) {
             log.info("BankServiceImpl.getAllBanks: No bank details found");
             throw new BankDetailsNotFoundException("No bank details found");
         }
