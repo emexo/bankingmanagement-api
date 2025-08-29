@@ -9,7 +9,9 @@ import com.bankingmanagement.model.BankTO;
 import com.bankingmanagement.model.BranchTO;
 import com.bankingmanagement.repository.BankRepository;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -18,124 +20,51 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Log4j2
+@Slf4j
 @Service
 public class BankServiceImpl implements BankService{
     @Autowired
     public BankRepository bankRepository;
 
-
+    /**
+     * Retrieves all banks from the repository and converts them to BankTO objects.
+     *
+     * @return a list of BankTO objects representing all banks
+     * @throws BankDetailsNotFoundException if no bank details are found
+     */
     @Override
     public List<BankTO> getAllBanks() throws BankDetailsNotFoundException {
-        log.info("BankServiceImpl.getAllBanks: Fetching all bank details");
-        List<Bank> banks = bankRepository.findAll();
-        if (banks == null || banks.isEmpty()) {
-            log.info("BankServiceImpl.getAllBanks: No bank details found");
+        log.info("Fetching all bank details");
+        List<Bank> bankList = bankRepository.findAll();
+        if(bankList.isEmpty()) {
+            log.error("No bank details found");
             throw new BankDetailsNotFoundException("No bank details found");
         }
-        return banks.stream()
-                .map(bank -> new BankTO(
-                        bank.getBankCode(),
-                        bank.getBankName(),
-                        bank.getBankAddress(),
-                        (bank.getBranchSet() == null ? new HashSet<Branch>() : bank.getBranchSet())
-                                .stream()
-                                .map(branch -> new BranchTO(
-                                        branch.getBranchId(),
-                                        branch.getBranchName(),
-                                        branch.getBranchAddress()))
-                                .collect(Collectors.toList())
-                ))
-                .collect(Collectors.toList());
+        return bankList.stream().map(this::convertToBankTO).collect(Collectors.toList());
+
     }
 
     /**
-     * Fetches bank details by bank code.
-     * @param bankCode
-     * @return
-     * @throws BankDetailsNotFoundException
+     * Converts a Bank entity to a BankTO object.
+     *
+     * @param bank the Bank entity to convert
+     * @return the corresponding BankTO object
      */
-    @Override
-    public BankTO getBankByCode(int bankCode) throws BankDetailsNotFoundException {
-        log.info("BankServiceImpl.getBankByCode: Fetching bank details for bank code: {}", bankCode);
-        Bank bank = bankRepository.findById(bankCode)
-                .orElseThrow(() -> new BankDetailsNotFoundException("Bank details not found for code: " + bankCode));
-
-        return new BankTO(
-                bank.getBankCode(),
-                bank.getBankName(),
-                bank.getBankAddress(),
+    private BankTO convertToBankTO(Bank bank) {
+        List<BranchTO> branchTOList = bank.getBranchSet() != null ?
                 bank.getBranchSet().stream()
                         .map(branch -> new BranchTO(
                                 branch.getBranchId(),
                                 branch.getBranchName(),
                                 branch.getBranchAddress()))
                         .collect(Collectors.toList())
-        );
-
-    }
-
-    /**
-     * Fetches bank details by bank name.
-     * @param bankName
-     * @return
-     * @throws BankDetailsNotFoundException
-     */
-    public BankTO getBankByName(String bankName) throws BankDetailsNotFoundException {
-        log.info("BankServiceImpl.getBankByName: Fetching bank details for bank name: {}", bankName);
-        Bank bank = bankRepository.findByBankName(bankName);
-        if (Objects.isNull(bank)) {
-            log.info("BankServiceImpl.getBankByName: Bank details not found for name: {}", bankName);
-            throw new BankDetailsNotFoundException("Bank details not found for name: " + bankName);
-        }
+                : List.of();
 
         return new BankTO(
                 bank.getBankCode(),
                 bank.getBankName(),
                 bank.getBankAddress(),
-                bank.getBranchSet().stream()
-                        .map(branch -> new BranchTO(
-                                branch.getBranchId(),
-                                branch.getBranchName(),
-                                branch.getBranchAddress()))
-                        .collect(Collectors.toList())
-        );
-    }
-
-    @Override
-    public BankTO addBank(BankRequest bank) throws BankDetailsNotFoundException {
-        log.info("BankServiceImpl.addBank: Adding new bank with name: {}", bank.getBankName());
-
-        if (Objects.isNull(bank) || bank.getBankName().isEmpty() || bank.getBankAddress().isEmpty()) {
-            log.error("BankServiceImpl.addBank: Invalid bank details provided");
-            throw new BankDetailsNotFoundException("Invalid bank details provided");
-        }
-
-        Bank newBank = new Bank();
-        newBank.setBankName(bank.getBankName());
-        newBank.setBankAddress(bank.getBankAddress());
-
-        Set<Branch> branches = bank.getBranchList().stream().map(branchTO -> {
-            Branch branch = new Branch();
-            branch.setBranchName(branchTO.getBranchName());
-            branch.setBranchAddress(branchTO.getBranchAddress());
-            branch.setBank(newBank); //update the bank reference in the branch
-            return branch;
-        }).collect(Collectors.toSet());
-        newBank.setBranchSet(branches);
-
-        Bank saveBank = bankRepository.save(newBank);
-        log.info("BankServiceImpl.addBank: Bank added successfully with code: {}", saveBank.getBankCode());
-        return new BankTO(
-                saveBank.getBankCode(),
-                saveBank.getBankName(),
-                saveBank.getBankAddress(),
-                saveBank.getBranchSet().stream()
-                        .map(branch -> new BranchTO(
-                                branch.getBranchId(),
-                                branch.getBranchName(),
-                                branch.getBranchAddress()))
-                        .collect(Collectors.toList())
+                branchTOList
         );
     }
 }
