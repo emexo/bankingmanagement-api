@@ -1,8 +1,10 @@
 package com.bankingmanagement.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,5 +31,13 @@ public class ExceptionHandlerAdvice {
         response.setErrorMessage(ex.getMessage());
         response.setRequestedURI(request.getRequestURI());
         return  response;
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ExceptionResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("VALIDATION_FAILED");
+        response.setErrorMessage(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
