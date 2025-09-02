@@ -27,38 +27,21 @@ public class BankController {
     private BankService bankService;
     //http://localhost:8080/api/v1/banks GET
     @GetMapping
-    public ResponseEntity<List<BankTO>> getAllBanks(){
+    public ResponseEntity<List<BankTO>> getAllBanks() throws BankDetailsNotFoundException{
         log.info("Received request to fetch all banks");
-        List<BankTO> bankTOList;
-        try {
-            bankTOList = bankService.getAllBanks();
-            log.info("Successfully fetched all banks");
-            return new ResponseEntity<>(bankTOList, HttpStatus.OK);
-        } catch (BankDetailsNotFoundException e) {
-            log.error("Error fetching bank details: {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception ex){
-            log.error("Internal server error: {}", ex.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        List<BankTO> bankTOList = bankService.getAllBanks();
+        log.info("Successfully fetched all banks");
+        return new ResponseEntity<>(bankTOList, HttpStatus.OK);
     }
 
     //http://localhost:8080/api/v1/banks/1 GET  @PathVariable
     //http://localhost:8080/api/v1/banks?code=1 GET  @RequestParam
     @GetMapping("/{code}")
-    public ResponseEntity<BankTO> getBankById(@PathVariable("code") @Positive(message = "Bank code must be a positive number") int bankCode){
+    public ResponseEntity<BankTO> getBankById(@PathVariable("code") @Positive(message = "Bank code must be a positive number") int bankCode) throws BankDetailsNotFoundException {
         log.info("Received request to fetch bank with code: {}", bankCode);
-        BankTO bankTO;
-        try {
-            bankTO = bankService.getBankById(bankCode);
+        BankTO bankTO = bankService.getBankById(bankCode);
             log.info("Successfully fetched bank with code: {}", bankCode);
             return new ResponseEntity<>(bankTO, HttpStatus.OK);
-        } catch (BankDetailsNotFoundException e) {
-            log.error("Error fetching bank details for code {}: {}", bankCode, e.getMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception ex){
-            log.error("Internal server error: {}", ex.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
     }
 }
