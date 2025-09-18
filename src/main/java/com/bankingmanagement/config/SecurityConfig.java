@@ -1,3 +1,4 @@
+/*
 package com.bankingmanagement.config;
 
 import org.springframework.context.annotation.Bean;
@@ -36,4 +37,4 @@ public class SecurityConfig {
                 .build();
         return new InMemoryUserDetailsManager(user1, user2);
     }
-}
+}*/

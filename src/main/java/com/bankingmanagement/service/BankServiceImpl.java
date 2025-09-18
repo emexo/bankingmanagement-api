@@ -3,6 +3,8 @@ package com.bankingmanagement.service;
 import com.bankingmanagement.entity.Bank;
 import com.bankingmanagement.exception.BankDetailsNotFoundException;
 import com.bankingmanagement.mapper.BankMapper;
+import com.bankingmanagement.model.AddBankResponseTO;
+import com.bankingmanagement.model.BankRequest;
 import com.bankingmanagement.model.BankTO;
 import com.bankingmanagement.repository.BankRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -48,5 +51,17 @@ public class BankServiceImpl implements BankService{
                     return new BankDetailsNotFoundException("Bank details not found for bank code: " + bankCode);
                 });
         return bankMapper.convertToBankTO(bank);
+    }
+
+    @Override
+    public AddBankResponseTO addBank(BankRequest bankRequest) throws BankDetailsNotFoundException {
+       log.info("Adding new bank with details: {}", bankRequest);
+       Bank bank = bankMapper.convertToBankEntity(bankRequest);
+       Bank savedBank = bankRepository.save(bank);
+       if(Objects.isNull(savedBank)){
+           log.error("Failed to add bank");
+           throw new BankDetailsNotFoundException("Failed to add bank");
+       }
+         return bankMapper.convertToAddBankResponseTO(savedBank);
     }
 }
