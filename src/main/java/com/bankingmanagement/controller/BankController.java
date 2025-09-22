@@ -24,6 +24,7 @@ public class BankController {
 
     @Autowired
     private BankService bankService;
+
     //http://localhost:8080/api/v1/banks GET
     @GetMapping
     public ResponseEntity<List<BankTO>> getAllBanks() throws BankDetailsNotFoundException{

@@ -13,6 +13,8 @@ import java.util.List;
 public class BankRequest {
     @NotNull
     private String bankName;
+    @NotNull
     private String bankAddress;
+    @NotNull
     private List<BranchRequest> branchList;
 }
