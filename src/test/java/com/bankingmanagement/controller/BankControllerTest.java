@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,5 +54,18 @@ public class BankControllerTest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getBankById_whenBankIsPresent_thenReturnBank() throws Exception {
+        BranchTO branchTO = new BranchTO(1, "Branch1", "Address1");
+        BankTO bankTO = new BankTO(1, "Bank1", "Address1", Arrays.asList(branchTO));
+
+        when(bankService.getBankById(anyInt())).thenReturn(bankTO);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1/banks/1")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder).andExpect(status().isOk());
     }
 }
