@@ -15,6 +15,6 @@ public class BankRequest {
     private String bankName;
     @NotNull
     private String bankAddress;
-    @NotNull
+
     private List<BranchRequest> branchList;
 }

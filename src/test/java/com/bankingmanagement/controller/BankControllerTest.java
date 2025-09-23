@@ -1,8 +1,7 @@
 package com.bankingmanagement.controller;
 
 import com.bankingmanagement.exception.BankDetailsNotFoundException;
-import com.bankingmanagement.model.BankTO;
-import com.bankingmanagement.model.BranchTO;
+import com.bankingmanagement.model.*;
 import com.bankingmanagement.service.BankService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,9 +14,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -67,5 +68,30 @@ public class BankControllerTest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
+    }
+
+    @Test
+    public void addBank_whenValidInput_thenReturnCreated() throws Exception {
+        AddBankResponseTO addBankResponseTO = new AddBankResponseTO(1, "Bank added successfully");
+        when(bankService.addBank(any())).thenReturn(addBankResponseTO);
+
+        BranchRequest branchRequest = new BranchRequest();
+        branchRequest.setBranchName("Branch1");
+        branchRequest.setBranchAddress("Address1");
+
+        BankRequest bankRequest = new BankRequest();
+        bankRequest.setBankName("Bank1");
+        bankRequest.setBankAddress("Address1");
+        bankRequest.setBranchList(Arrays.asList(branchRequest));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String bankRequestJson = objectMapper.writeValueAsString(bankRequest);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/v1/banks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(bankRequestJson)
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder).andExpect(status().isCreated());
     }
 }
