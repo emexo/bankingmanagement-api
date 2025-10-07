@@ -37,7 +37,7 @@ public class BankController {
     //http://localhost:8080/api/v1/banks/1 GET  @PathVariable
     //http://localhost:8080/api/v1/banks?code=1 GET  @RequestParam
     @GetMapping("/{code}")
-    public ResponseEntity<BankTO> getBankById(@PathVariable("code") @Positive(message = "Bank code must be a positive number") int bankCode) throws BankDetailsNotFoundException {
+    public ResponseEntity<BankTO> getBankById(@PathVariable("code") @Positive(message = "Bank code must be a positive number") String bankCode) throws BankDetailsNotFoundException {
         log.info("Received request to fetch bank with code: {}", bankCode);
         BankTO bankTO = bankService.getBankById(bankCode);
             log.info("Successfully fetched bank with code: {}", bankCode);

@@ -18,8 +18,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,7 +37,7 @@ public class BankControllerTest {
     @Test
     public void getAllBanks_whenBanksArePresent_thenReturnListOfBanks() throws Exception {
         BranchTO branchTO = new BranchTO(1, "Branch1", "Address1");
-        BankTO bankTO = new BankTO(1, "Bank1", "Address1", Arrays.asList(branchTO));
+        BankTO bankTO = new BankTO(1, "Bank1", "Address1");
 
         when(bankService.getAllBanks()).thenReturn(Arrays.asList(bankTO));
 
@@ -60,9 +59,9 @@ public class BankControllerTest {
     @Test
     public void getBankById_whenBankIsPresent_thenReturnBank() throws Exception {
         BranchTO branchTO = new BranchTO(1, "Branch1", "Address1");
-        BankTO bankTO = new BankTO(1, "Bank1", "Address1", Arrays.asList(branchTO));
+        BankTO bankTO = new BankTO(1, "Bank1", "Address1");
 
-        when(bankService.getBankById(anyInt())).thenReturn(bankTO);
+        when(bankService.getBankById(anyString())).thenReturn(bankTO);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1/banks/1")
                 .contentType(MediaType.APPLICATION_JSON);
