@@ -6,9 +6,13 @@ import com.bankingmanagement.mapper.BankMapper;
 import com.bankingmanagement.model.AddBankResponseTO;
 import com.bankingmanagement.model.BankRequest;
 import com.bankingmanagement.model.BankTO;
+import com.bankingmanagement.mongoentity.BankEntity;
+import com.bankingmanagement.mongorepository.BankMongoRepository;
 import com.bankingmanagement.repository.BankRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +26,9 @@ public class BankServiceImpl implements BankService{
     public BankRepository bankRepository;
 
     @Autowired
+    private BankMongoRepository bankMongoRepository;
+
+    @Autowired
     private BankMapper bankMapper;
 
     /**
@@ -33,7 +40,7 @@ public class BankServiceImpl implements BankService{
     @Override
     public List<BankTO> getAllBanks() throws BankDetailsNotFoundException {
         log.info("Fetching all bank details");
-        List<Bank> bankList = bankRepository.findAll();
+        List<BankEntity> bankList = bankMongoRepository.findAll();
         if(bankList.isEmpty()) {
             log.error("No bank details found");
             throw new BankDetailsNotFoundException("No bank details found");
@@ -42,13 +49,19 @@ public class BankServiceImpl implements BankService{
 
     }
 
+    @Cacheable(cacheNames = "banks", key = "#bankCode")
     @Override
-    public BankTO getBankById(int bankCode) throws BankDetailsNotFoundException {
-        log.info("Fetching bank details for bank code: {}", bankCode);
-        Bank bank = bankRepository.findById(bankCode)
+    public BankTO getBankById(String id) throws BankDetailsNotFoundException {
+        log.info("Fetching bank details for bank code: {}", id);
+        try {
+            Thread.sleep(120000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        BankEntity bank = bankMongoRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("Bank details not found for bank code: {}", bankCode);
-                    return new BankDetailsNotFoundException("Bank details not found for bank code: " + bankCode);
+                    log.error("Bank details not found for bank code: {}", id);
+                    return new BankDetailsNotFoundException("Bank details not found for bank code: " + id);
                 });
         return bankMapper.convertToBankTO(bank);
     }
@@ -63,5 +76,10 @@ public class BankServiceImpl implements BankService{
            throw new BankDetailsNotFoundException("Failed to add bank");
        }
          return bankMapper.convertToAddBankResponseTO(savedBank);
+    }
+
+    @CacheEvict(value = "banks", allEntries = true)
+    public void evictAllBanksCache(){
+
     }
 }

@@ -58,4 +58,11 @@ public class BankController {
         log.info("Successfully added bank: {}", response);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @GetMapping("clearCache")
+    public ResponseEntity<String> clearCache() {
+        bankService.evictAllBanksCache();
+        log.info("Cache cleared successfully");
+        return new ResponseEntity<>("Cache cleared successfully", HttpStatus.OK);
+    }
 }

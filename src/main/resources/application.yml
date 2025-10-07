@@ -1,4 +1,8 @@
 spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://regussm:pA3a0RCt2RI5cewM@emexo.en2dxtv.mongodb.net
+      database: bankingmanagement
   datasource:
     url: jdbc:postgresql://localhost:5433/bankingmanagement
     username: postgres
@@ -27,4 +31,3 @@ management:
   endpoint:
     health:
       show-details: always
-      exclude: db

@@ -5,6 +5,5 @@ import java.util.List;
 public record BankTO(
         int bankCode,
         String bankName,
-        String bankAddress,
-        List<BranchTO> branchList) {
+        String bankAddress) {
 }

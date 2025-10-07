@@ -6,6 +6,7 @@ import com.bankingmanagement.model.AddBankResponseTO;
 import com.bankingmanagement.model.BankRequest;
 import com.bankingmanagement.model.BankTO;
 import com.bankingmanagement.model.BranchTO;
+import com.bankingmanagement.mongoentity.BankEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -22,15 +23,7 @@ public class BankMapper {
      * @param bank the Bank entity to convert
      * @return the corresponding BankTO object
      */
-    public BankTO convertToBankTO(Bank bank) {
-        List<BranchTO> branchTOList = bank.getBranchSet() != null ?
-                bank.getBranchSet().stream()
-                        .map(branch -> new BranchTO(
-                                branch.getBranchId(),
-                                branch.getBranchName(),
-                                branch.getBranchAddress()))
-                        .collect(Collectors.toList())
-                : List.of();
+    public BankTO convertToBankTO(BankEntity bank) {
 
         return new BankTO(
                 bank.getBankCode(),
