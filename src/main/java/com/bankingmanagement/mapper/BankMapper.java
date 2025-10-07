@@ -28,8 +28,7 @@ public class BankMapper {
         return new BankTO(
                 bank.getBankCode(),
                 bank.getBankName(),
-                bank.getBankAddress(),
-                branchTOList
+                bank.getBankAddress()
         );
     }
 
