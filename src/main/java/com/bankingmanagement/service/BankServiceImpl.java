@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class BankServiceImpl implements BankService{
      * @return a list of BankTO objects representing all banks
      * @throws BankDetailsNotFoundException if no bank details are found
      */
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Override
     public List<BankTO> getAllBanks() throws BankDetailsNotFoundException {
         log.info("Fetching all bank details");
