@@ -8,21 +8,21 @@ import java.util.Set;
 
 @Getter
 @Setter
-@Table(name ="t_bank")
+@Table(name = "T_Bank")
 @Entity
 public class Bank {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bank_name_seq")
-    @SequenceGenerator(name = "bank_name_seq", sequenceName = "bank_code_sequence", allocationSize = 1)
-    @Column(name = "bank_code")
+    @Column(name = "Bank_Code")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bank_code_seq")
+    @SequenceGenerator(name = "bank_code_seq", sequenceName = "bank_code_sequence", allocationSize = 1)
     private int bankCode;
 
-    @Column(name = "bank_name")
+    @Column(name = "Bank_Name")
     private String bankName;
 
-    @Column(name = "bank_address")
-    private String bankAddress;
+    @Column(name = "Bank_Address")
+    private String bandAddress;
 
-    @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Branch> branchSet;
+    @OneToMany(mappedBy = "bank")
+    private Set<Branch> branch;
 }
