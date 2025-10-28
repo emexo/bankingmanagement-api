@@ -1,7 +1,11 @@
 package com.bankingmanagement.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "T_Branch")
 public class Branch {

@@ -21,7 +21,7 @@ public class Bank {
     private String bankName;
 
     @Column(name = "Bank_Address")
-    private String bandAddress;
+    private String bankAddress;
 
     @OneToMany(mappedBy = "bank")
     private Set<Branch> branch;

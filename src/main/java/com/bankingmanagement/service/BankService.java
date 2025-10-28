@@ -6,5 +6,5 @@ import com.bankingmanagement.model.BankTO;
 import java.util.List;
 
 public interface BankService {
-    List<BankTO> findAll() throws BankDetailsNotfoundException;
+    List<BankTO> getAllBanks() throws BankDetailsNotfoundException;
 }

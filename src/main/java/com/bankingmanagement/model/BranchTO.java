@@ -7,9 +7,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class BankTO{
-    private int bankCode;
-    private String bankName;
-    private String bankAddress;
+public class BranchTO {
+    private int branchId;
+    private String branchName;
+    private String branchAddress;
     private List<BranchTO> branches;
 }
