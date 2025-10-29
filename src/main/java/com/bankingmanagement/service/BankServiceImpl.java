@@ -1,7 +1,7 @@
 package com.bankingmanagement.service;
 
 import com.bankingmanagement.entity.Bank;
-import com.bankingmanagement.exception.BankDetailsNotfoundException;
+import com.bankingmanagement.exception.BankDetailsNotFoundException;
 import com.bankingmanagement.mapper.BankMapper;
 import com.bankingmanagement.model.BankTO;
 import com.bankingmanagement.repository.BankRepository;
@@ -27,16 +27,16 @@ public class BankServiceImpl implements BankService{
     /**
      * Get all banks
      * @return
-     * @throws BankDetailsNotfoundException
+     * @throws BankDetailsNotFoundException
      */
     @Override
-    public List<BankTO> getAllBanks() throws BankDetailsNotfoundException {
+    public List<BankTO> getAllBanks() throws BankDetailsNotFoundException {
         log.info("Fetching all bank details");
         List<Bank> bankList = bankRepository.findAll();
 
         if(CollectionUtils.isEmpty(bankList)){
             log.error("No bank details found");
-            throw new BankDetailsNotfoundException("No bank details found");
+            throw new BankDetailsNotFoundException("No bank details found");
         }
         // Convert using mapper
         List<BankTO> bankTOList = bankList.stream().map(BankMapper::covertToBankTO).toList();
