@@ -34,7 +34,7 @@ public class BankServiceImpl implements BankService{
         log.info("Fetching all bank details");
         List<Bank> bankList = bankRepository.findAll();
 
-        if(CollectionUtils.isEmpty(bankList)){
+        if(!CollectionUtils.isEmpty(bankList)){
             log.error("No bank details found");
             throw new BankDetailsNotFoundException("No bank details found");
         }

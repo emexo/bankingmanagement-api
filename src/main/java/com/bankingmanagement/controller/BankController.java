@@ -22,22 +22,10 @@ public class BankController {
 
     // http://127.0.0.1:8080/api/v1/banks GET
     @GetMapping
-    public ResponseEntity<List<BankTO>> getAllBanks() {
+    public ResponseEntity<List<BankTO>> getAllBanks() throws BankDetailsNotFoundException {
         log.info("Received request to fetch all banks");
-        List<BankTO> bankTOList = null;
-
-        try {
-            bankTOList = bankService.getAllBanks();
-            log.info("Successfully retrieved {} banks", bankTOList.size());
-        } catch (BankDetailsNotFoundException ex){
-            log.error("Error fetching bank details: {}", ex.getMessage());
-            return ResponseEntity.notFound().build();
-        } catch (Exception ex1){
-            log.error("Unexpected error: {}", ex1.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
-
-        log.info("Returning bank details response");
+        List<BankTO> bankTOList = bankService.getAllBanks();
+        log.info("Successfully retrieved {} banks", bankTOList.size());
         return ResponseEntity.ok(bankTOList);
     }
 }
