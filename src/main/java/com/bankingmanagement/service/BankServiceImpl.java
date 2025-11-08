@@ -44,4 +44,17 @@ public class BankServiceImpl implements BankService{
         log.info("Successfully fetched {} bank details", bankTOList.size());
         return bankTOList;
     }
+
+    @Override
+    public BankTO createBank(com.bankingmanagement.model.BankRequest bankRequest) throws BankDetailsNotFoundException {
+        log.info("Creating a new bank with name: {}", bankRequest);
+
+        // Convert BankRequest to Bank entity
+        Bank bankEntity = bankMapper.convertToBankEntity(bankRequest);
+        Bank savedBank = bankRepository.save(bankEntity);
+        log.info("Successfully created bank with code: {}", savedBank.getBankCode());
+
+        return bankMapper.covertToBankTO(savedBank);
+
+    }
 }

@@ -23,6 +23,6 @@ public class Bank {
     @Column(name = "Bank_Address")
     private String bankAddress;
 
-    @OneToMany(mappedBy = "bank")
+    @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Branch> branch;
 }

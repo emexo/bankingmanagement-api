@@ -1,14 +1,15 @@
 package com.bankingmanagement.controller;
 
 import com.bankingmanagement.exception.BankDetailsNotFoundException;
+import com.bankingmanagement.model.BankRequest;
 import com.bankingmanagement.model.BankTO;
 import com.bankingmanagement.service.BankService;
+import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,4 +29,14 @@ public class BankController {
         log.info("Successfully retrieved {} banks", bankTOList.size());
         return ResponseEntity.ok(bankTOList);
     }
+
+    @PostMapping
+    public ResponseEntity<BankTO> createBank(@RequestBody @Valid BankRequest bankRequest) throws BankDetailsNotFoundException{
+        log.info("Received request to create a new bank: {}", bankRequest.getBankName());
+        BankTO createdBank = bankService.createBank(bankRequest);
+        log.info("Successfully created bank with code: {}", createdBank.getBankCode());
+        return ResponseEntity.ok(createdBank);
+
+    }
 }
+

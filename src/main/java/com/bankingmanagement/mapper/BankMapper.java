@@ -6,9 +6,7 @@ import com.bankingmanagement.model.BankTO;
 import com.bankingmanagement.model.BranchTO;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
