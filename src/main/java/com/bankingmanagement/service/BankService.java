@@ -8,5 +8,4 @@ import java.util.List;
 
 public interface BankService {
     List<BankTO> getAllBanks() throws BankDetailsNotFoundException;
-    BankTO createBank(BankRequest bankRequest) throws BankDetailsNotFoundException;
 }

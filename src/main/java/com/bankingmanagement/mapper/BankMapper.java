@@ -5,7 +5,9 @@ import com.bankingmanagement.entity.Branch;
 import com.bankingmanagement.model.BankTO;
 import com.bankingmanagement.model.BranchTO;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,9 +19,12 @@ public class BankMapper {
         bankTO.setBankCode(bank.getBankCode());
         bankTO.setBankName(bank.getBankName());
         bankTO.setBankAddress(bank.getBankAddress());
-        List<BranchTO> branchTOList = bank.getBranch().stream()
-                .map(BankMapper::convertToBranchTO).collect(Collectors.toList());
-        bankTO.setBranches(branchTOList);
+
+        if(!CollectionUtils.isEmpty(bank.getBranch())) {
+            List<BranchTO> branchTOList = bank.getBranch().stream()
+                    .map(BankMapper::convertToBranchTO).collect(Collectors.toList());
+            bankTO.setBranches(branchTOList);
+        }
         return bankTO;
     }
 

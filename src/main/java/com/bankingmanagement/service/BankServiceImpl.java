@@ -34,7 +34,7 @@ public class BankServiceImpl implements BankService{
         log.info("Fetching all bank details");
         List<Bank> bankList = bankRepository.findAll();
 
-        if(!CollectionUtils.isEmpty(bankList)){
+        if(CollectionUtils.isEmpty(bankList)){
             log.error("No bank details found");
             throw new BankDetailsNotFoundException("No bank details found");
         }
@@ -45,10 +45,5 @@ public class BankServiceImpl implements BankService{
         return bankTOList;
     }
 
-    @Override
-    public BankTO createBank(com.bankingmanagement.model.BankRequest bankRequest) throws BankDetailsNotFoundException {
-        log.info("Creating a new bank with name: {}", bankRequest);
-        return null;
 
-    }
 }

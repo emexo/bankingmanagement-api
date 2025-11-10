@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,13 +31,6 @@ public class BankController {
         return ResponseEntity.ok(bankTOList);
     }
 
-    @PostMapping
-    public ResponseEntity<BankTO> createBank(@RequestBody @Valid BankRequest bankRequest) throws BankDetailsNotFoundException{
-        log.info("Received request to create a new bank: {}", bankRequest.getBankName());
-        BankTO createdBank = bankService.createBank(bankRequest);
-        log.info("Successfully created bank with code: {}", createdBank.getBankCode());
-        return ResponseEntity.ok(createdBank);
 
-    }
 }
 
