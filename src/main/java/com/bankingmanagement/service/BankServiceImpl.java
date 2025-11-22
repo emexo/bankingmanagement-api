@@ -4,6 +4,7 @@ import com.bankingmanagement.entity.Bank;
 import com.bankingmanagement.exception.BankDetailsNotFoundException;
 import com.bankingmanagement.mapper.BankMapper;
 import com.bankingmanagement.model.BankTO;
+import com.bankingmanagement.model.BranchTO;
 import com.bankingmanagement.repository.BankRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class BankServiceImpl implements BankService{
      * @return
      * @throws BankDetailsNotFoundException
      */
+
     @Override
     public List<BankTO> getAllBanks() throws BankDetailsNotFoundException {
         log.info("Fetching all bank details");
@@ -38,9 +40,9 @@ public class BankServiceImpl implements BankService{
             log.error("No bank details found");
             throw new BankDetailsNotFoundException("No bank details found");
         }
-        // Convert using mapper
-        List<BankTO> bankTOList = bankList.stream().map(BankMapper::covertToBankTO).toList();
-
+        List<BankTO> bankTOList = bankList.stream()
+                .map(BankMapper::covertToBankTO)
+                .toList();
         log.info("Successfully fetched {} bank details", bankTOList.size());
         return bankTOList;
     }
