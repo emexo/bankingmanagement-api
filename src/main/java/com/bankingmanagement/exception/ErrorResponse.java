@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ExceptionResponse {
+public class ErrorResponse {
     private String errorMessage;
     private String uri;
 }
